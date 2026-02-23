@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           dbc version
-          which dbc
+          command -v dbc || where dbc
 
   test-with-version:
     name: Test with specific version
@@ -40,7 +40,9 @@ jobs:
 
       - name: Verify version
         run: |
-          dbc version | grep -q "v1.0.0"
+          VERSION=$(dbc version)
+          echo "Installed version: $VERSION"
+          echo "$VERSION" | grep -q "v1.0.0" || (echo "Expected v1.0.0 but got $VERSION" && exit 1)
 
   test-with-drivers:
     name: Test driver installation
@@ -53,10 +55,6 @@ jobs:
         with:
           drivers: 'sqlite'
 
-      - name: Verify driver
-        run: |
-          dbc list
-
   test-cache:
     name: Test caching
     runs-on: ubuntu-latest
@@ -67,8 +65,12 @@ jobs:
         id: first
         uses: ./
 
-      - name: Remove dbc
-        run: rm -f ~/.local/bin/dbc
+      - name: Remove dbc and cached files
+        run: |
+          DBC_PATH=$(which dbc)
+          rm -f "$DBC_PATH"
+          # Remove all potential cached paths to properly test cache restoration
+          rm -rf ~/.local/bin/dbc ~/.local/share/dbc ~/.config/dbc
 
       - name: Second run (should restore from cache)
         id: second

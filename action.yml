@@ -48,6 +48,8 @@ runs:
       id: cache
       uses: actions/cache@v4
       with:
+        # Include all possible cache paths for different OSes
+        # Missing paths are silently ignored by the cache action
         path: |
           ~/.local/bin/dbc
           ~/Library/Application Support/dbc
@@ -72,7 +74,7 @@ runs:
       id: install
       shell: bash
       run: |
-        VERSION=$(dbc version | grep -oP 'v\d+\.\d+\.\d+' || echo "unknown")
+        VERSION=$(dbc version | grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' | head -n1 || echo "unknown")
         echo "version=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Authenticate with API key

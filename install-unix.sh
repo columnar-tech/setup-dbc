@@ -6,10 +6,11 @@ VERSION="${1:-latest}"
 echo "Installing dbc CLI version: $VERSION"
 
 # Download and run the official install script
+# Note: Version flag (-v) support depends on the official install script
+# If not supported, the script will install the latest version
 if [ "$VERSION" = "latest" ]; then
   curl -fsSL https://dbc.how/install.sh | bash
 else
-  # Pass version to install script if supported
   curl -fsSL https://dbc.how/install.sh | bash -s -- -v "$VERSION"
 fi
 

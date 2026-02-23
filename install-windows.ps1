@@ -7,13 +7,25 @@ $ErrorActionPreference = "Stop"
 Write-Host "Installing dbc CLI version: $Version"
 
 try {
-    # Download and run the official Windows install script
-    if ($Version -eq "latest") {
-        Invoke-Expression (Invoke-WebRequest -Uri "https://dbc.how/install.ps1" -UseBasicParsing).Content
-    } else {
-        # Pass version to install script if supported
-        $installScript = (Invoke-WebRequest -Uri "https://dbc.how/install.ps1" -UseBasicParsing).Content
-        Invoke-Expression "$installScript -Version $Version"
+    # Download the official Windows install script
+    $installScript = (Invoke-WebRequest -Uri "https://dbc.how/install.ps1" -UseBasicParsing).Content
+
+    # Save to temporary file to avoid Invoke-Expression security risks
+    $tempScript = Join-Path $env:TEMP "dbc-install-$(Get-Random).ps1"
+    $installScript | Out-File -FilePath $tempScript -Encoding UTF8
+
+    try {
+        # Execute script with parameters
+        # Note: -Version parameter support depends on the official install script
+        # If not supported, the script will install the latest version
+        if ($Version -eq "latest") {
+            & $tempScript
+        } else {
+            & $tempScript -Version $Version
+        }
+    } finally {
+        # Clean up temporary file
+        Remove-Item -Path $tempScript -ErrorAction SilentlyContinue
     }
 
     # Verify installation
