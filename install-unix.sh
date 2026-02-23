@@ -22,6 +22,6 @@ if ! command -v dbc &> /dev/null; then
 fi
 
 # Output version for verification
-dbc version
+dbc --version
 
 echo "dbc CLI installed successfully"

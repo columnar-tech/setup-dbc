@@ -36,7 +36,7 @@ try {
     }
 
     # Output version for verification
-    dbc version
+    dbc --version
 
     Write-Host "dbc CLI installed successfully"
 }
