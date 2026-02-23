@@ -1,0 +1,118 @@
+name: 'Setup DBC'
+description: 'Install dbc CLI, authenticate, and install drivers'
+author: 'zeroshade'
+
+inputs:
+  version:
+    description: 'Version of dbc CLI to install (e.g., v1.2.3 or "latest")'
+    required: false
+    default: 'latest'
+
+  api-key:
+    description: 'API key for authenticating private driver installations'
+    required: false
+
+  drivers:
+    description: 'Comma-separated list of drivers to install (e.g., "postgres,mysql")'
+    required: false
+
+  config-file:
+    description: 'Path to dbc.toml config file for driver installation'
+    required: false
+    default: 'dbc.toml'
+
+  skip-drivers:
+    description: 'Skip driver installation even if drivers or config-file are specified'
+    required: false
+    default: 'false'
+
+outputs:
+  version:
+    description: 'The installed version of dbc CLI'
+    value: ${{ steps.install.outputs.version }}
+
+  cache-hit:
+    description: 'Whether the dbc CLI was restored from cache'
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Determine cache key
+      shell: bash
+      id: cache-key
+      run: |
+        echo "key=dbc-cli-${{ runner.os }}-${{ inputs.version }}" >> $GITHUB_OUTPUT
+
+    - name: Cache dbc CLI
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.local/bin/dbc
+          ~/Library/Application Support/dbc
+          ${{ runner.temp }}/dbc
+        key: ${{ steps.cache-key.outputs.key }}
+
+    - name: Install dbc CLI (Unix)
+      id: install-unix
+      if: runner.os != 'Windows' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        ${{ github.action_path }}/install-unix.sh "${{ inputs.version }}"
+
+    - name: Install dbc CLI (Windows)
+      id: install-windows
+      if: runner.os == 'Windows' && steps.cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        & "${{ github.action_path }}/install-windows.ps1" -Version "${{ inputs.version }}"
+
+    - name: Get installed version
+      id: install
+      shell: bash
+      run: |
+        VERSION=$(dbc version | grep -oP 'v\d+\.\d+\.\d+' || echo "unknown")
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Authenticate with API key
+      if: inputs.api-key != ''
+      shell: bash
+      run: |
+        dbc auth login --api-key "${{ inputs.api-key }}"
+
+    - name: Install drivers from list
+      if: inputs.drivers != '' && inputs.skip-drivers != 'true'
+      shell: bash
+      run: |
+        IFS=',' read -ra DRIVER_ARRAY <<< "${{ inputs.drivers }}"
+        FAILED_DRIVERS=()
+        for driver in "${DRIVER_ARRAY[@]}"; do
+          driver=$(echo "$driver" | xargs)
+          echo "Installing driver: $driver"
+          if ! dbc install "$driver"; then
+            FAILED_DRIVERS+=("$driver")
+          fi
+        done
+        if [ ${#FAILED_DRIVERS[@]} -ne 0 ]; then
+          echo "::error::Failed to install drivers: ${FAILED_DRIVERS[*]}"
+          exit 2
+        fi
+
+    - name: Install drivers from config file
+      if: inputs.drivers == '' && inputs.skip-drivers != 'true'
+      shell: bash
+      run: |
+        if [ -f "${{ inputs.config-file }}" ]; then
+          echo "Installing drivers from ${{ inputs.config-file }}"
+          if ! dbc sync -p "${{ inputs.config-file }}"; then
+            echo "::error::Failed to sync drivers from config file"
+            exit 2
+          fi
+        else
+          echo "No config file found at ${{ inputs.config-file }}, skipping driver installation"
+        fi
+
+branding:
+  icon: 'download'
+  color: 'blue'

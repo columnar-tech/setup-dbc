@@ -1,0 +1,82 @@
+name: Test Action
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-basic:
+    name: Test basic installation
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test action
+        uses: ./
+        with:
+          version: 'latest'
+
+      - name: Verify installation
+        shell: bash
+        run: |
+          dbc version
+          which dbc
+
+  test-with-version:
+    name: Test with specific version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test action with version
+        uses: ./
+        with:
+          version: 'v1.0.0'
+
+      - name: Verify version
+        run: |
+          dbc version | grep -q "v1.0.0"
+
+  test-with-drivers:
+    name: Test driver installation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test with drivers
+        uses: ./
+        with:
+          drivers: 'sqlite'
+
+      - name: Verify driver
+        run: |
+          dbc list
+
+  test-cache:
+    name: Test caching
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: First run
+        id: first
+        uses: ./
+
+      - name: Remove dbc
+        run: rm -f ~/.local/bin/dbc
+
+      - name: Second run (should restore from cache)
+        id: second
+        uses: ./
+
+      - name: Verify cache was used
+        run: |
+          if [ "${{ steps.second.outputs.cache-hit }}" != "true" ]; then
+            echo "Cache was not used!"
+            exit 1
+          fi
