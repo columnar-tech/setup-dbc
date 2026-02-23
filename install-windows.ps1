@@ -33,23 +33,29 @@ try {
         Remove-Item -Path $tempScript -ErrorAction SilentlyContinue
     }
 
-    # Add expected installation directory to PATH first
-    $dbcInstallPath = Join-Path $env:USERPROFILE ".local\bin"
-    if ((Test-Path $dbcInstallPath) -and ($env:Path -notlike "*$dbcInstallPath*")) {
-        $env:Path = "$dbcInstallPath;$env:Path"
+    # Try to find dbc - first check expected location directly
+    $expectedDbcPath = Join-Path (Join-Path $env:USERPROFILE ".local\bin") "dbc.exe"
+    if (Test-Path $expectedDbcPath) {
+        $expectedDir = Split-Path -Parent $expectedDbcPath
+        if ($env:Path -notlike "*$expectedDir*") {
+            $env:Path = "$expectedDir;$env:Path"
+        }
     }
 
-    # Verify installation
+    # Verify installation and get actual location
     $dbcPath = Get-Command dbc -ErrorAction SilentlyContinue
     if (-not $dbcPath) {
         Write-Error "dbc CLI installation failed - command not found"
         exit 1
     }
 
-    # Get actual dbc installation directory for GitHub Actions PATH
+    # Ensure actual location is in session PATH (may differ from expected)
     $actualDbcDir = Split-Path -Parent $dbcPath.Source
+    if ($env:Path -notlike "*$actualDbcDir*") {
+        $env:Path = "$actualDbcDir;$env:Path"
+    }
 
-    # Add to GitHub Actions PATH for subsequent steps
+    # Add actual location to GitHub Actions PATH
     if ($env:GITHUB_PATH) {
         $actualDbcDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
