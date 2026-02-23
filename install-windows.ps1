@@ -21,23 +21,16 @@ try {
     $installScript | Out-File -FilePath $tempScript -Encoding UTF8
 
     try {
-        # Execute script with parameters
-        # Note: -Version parameter support depends on the official install script
-        # If not supported, the script will install the latest version
-        if ($Version -eq "latest") {
-            & $tempScript
-        } else {
-            & $tempScript -Version $Version
+        # Execute script with version via environment variable
+        # Note: Version is passed via APP_VERSION environment variable
+        # If the official install script doesn't support it, latest version will be installed
+        if ($Version -ne "latest") {
+            $env:APP_VERSION = $Version
         }
+        & $tempScript
     } finally {
         # Clean up temporary file
         Remove-Item -Path $tempScript -ErrorAction SilentlyContinue
-    }
-
-    # Add dbc installation directory to PATH
-    $dbcInstallPath = Join-Path $env:USERPROFILE ".local\bin"
-    if ((Test-Path $dbcInstallPath) -and ($env:Path -notlike "*$dbcInstallPath*")) {
-        $env:Path = "$dbcInstallPath;$env:Path"
     }
 
     # Verify installation
@@ -47,9 +40,16 @@ try {
         exit 1
     }
 
-    # Add to GitHub Actions PATH for subsequent steps (use actual location)
+    # Get actual dbc installation directory
+    $actualDbcDir = Split-Path -Parent $dbcPath.Source
+
+    # Add actual dbc directory to session PATH
+    if ($env:Path -notlike "*$actualDbcDir*") {
+        $env:Path = "$actualDbcDir;$env:Path"
+    }
+
+    # Add to GitHub Actions PATH for subsequent steps
     if ($env:GITHUB_PATH) {
-        $actualDbcDir = Split-Path -Parent $dbcPath.Source
         $actualDbcDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
 
