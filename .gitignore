@@ -1,1 +1,47 @@
+# Worktrees
 .worktrees/
+
+# Plans
+docs/plans
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+
+# Local testing (act)
+.actrc
+.secrets
+.env.local
+.env.*.local
+
+# Test artifacts
+test-results/
+coverage/
+*.log
+*.tmp
+*.temp
+
+# GitHub Actions debugging
+.runner/
+
+# Backup files
+*.bak
+*.backup
