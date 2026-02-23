@@ -34,11 +34,22 @@ try {
         Remove-Item -Path $tempScript -ErrorAction SilentlyContinue
     }
 
+    # Add dbc installation directory to PATH
+    $dbcInstallPath = Join-Path $env:USERPROFILE ".local\bin"
+    if (Test-Path $dbcInstallPath) {
+        $env:Path = "$dbcInstallPath;$env:Path"
+    }
+
     # Verify installation
     $dbcPath = Get-Command dbc -ErrorAction SilentlyContinue
     if (-not $dbcPath) {
         Write-Error "dbc CLI installation failed - command not found"
         exit 1
+    }
+
+    # Add to GitHub Actions PATH for subsequent steps
+    if ($env:GITHUB_PATH) {
+        $dbcInstallPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
 
     # Output version for verification
