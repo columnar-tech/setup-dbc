@@ -21,7 +21,7 @@ Install the latest version of dbc CLI:
 steps:
   - uses: actions/checkout@v4
   - uses: columnar-tech/setup-dbc@v1
-  - run: dbc version
+  - run: dbc --version
 ```
 
 ### With Specific Version
@@ -32,7 +32,7 @@ Pin to a specific version for reproducibility:
 steps:
   - uses: columnar-tech/setup-dbc@v1
     with:
-      version: 'v1.2.3'
+      version: 'v0.2.0'
 ```
 
 ### With Driver Installation
@@ -95,7 +95,7 @@ steps:
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `version` | Version of dbc CLI to install (e.g., `v1.2.3` or `latest`) | No | `latest` |
+| `version` | Version of dbc CLI to install (e.g., `v0.2.0` or `latest`) | No | `latest` |
 | `api-key` | API key for authenticating private driver installations | No | - |
 | `drivers` | Comma-separated list of drivers to install | No | - |
 | `config-file` | Path to dbc.toml config file for driver installation | No | `dbc.toml` |
@@ -139,14 +139,11 @@ jobs:
 
       - uses: columnar-tech/setup-dbc@v1
         with:
-          version: 'v1.2.3'
+          version: 'v0.2.0'
           drivers: 'postgres,mysql'
 
-      - name: Run database tests
-        run: |
-          dbc start postgres
-          npm test
-          dbc stop
+      - name: Run tests
+        run: npm test
 ```
 
 ### Matrix Testing
@@ -170,7 +167,6 @@ jobs:
         with:
           drivers: ${{ matrix.driver }}
 
-      - run: dbc start ${{ matrix.driver }}
       - run: npm test
 ```
 
