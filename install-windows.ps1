@@ -9,7 +9,12 @@ Write-Host "Installing dbc CLI version: $Version"
 try {
     # Download the official Windows install script
     $response = Invoke-WebRequest -Uri "https://dbc.columnar.tech/install.ps1" -UseBasicParsing
-    $installScript = [System.Text.Encoding]::UTF8.GetString($response.Content)
+    # Handle both PowerShell Core (byte[]) and Windows PowerShell 5.1 (string)
+    if ($response.Content -is [byte[]]) {
+        $installScript = [System.Text.Encoding]::UTF8.GetString($response.Content)
+    } else {
+        $installScript = $response.Content
+    }
 
     # Save to temporary file to avoid Invoke-Expression security risks
     $tempScript = Join-Path $env:TEMP "dbc-install-$(Get-Random).ps1"
