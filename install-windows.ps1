@@ -37,8 +37,9 @@ try {
     $expectedDbcPath = Join-Path (Join-Path $env:USERPROFILE ".local\bin") "dbc.exe"
     if (Test-Path $expectedDbcPath) {
         $expectedDir = Split-Path -Parent $expectedDbcPath
-        $pathEntries = $env:Path -split ';'
-        if ($pathEntries -notcontains $expectedDir) {
+        $pathEntries = $env:Path -split ';' | ForEach-Object { $_.TrimEnd('\') }
+        $expectedDirNormalized = $expectedDir.TrimEnd('\')
+        if ($pathEntries -notcontains $expectedDirNormalized) {
             $env:Path = "$expectedDir;$env:Path"
         }
     }
@@ -52,8 +53,9 @@ try {
 
     # Ensure actual location is in session PATH (may differ from expected)
     $actualDbcDir = Split-Path -Parent $dbcPath.Source
-    $pathEntries = $env:Path -split ';'
-    if ($pathEntries -notcontains $actualDbcDir) {
+    $pathEntries = $env:Path -split ';' | ForEach-Object { $_.TrimEnd('\') }
+    $actualDbcDirNormalized = $actualDbcDir.TrimEnd('\')
+    if ($pathEntries -notcontains $actualDbcDirNormalized) {
         $env:Path = "$actualDbcDir;$env:Path"
     }
 
