@@ -33,6 +33,12 @@ try {
         Remove-Item -Path $tempScript -ErrorAction SilentlyContinue
     }
 
+    # Add expected installation directory to PATH first
+    $dbcInstallPath = Join-Path $env:USERPROFILE ".local\bin"
+    if ((Test-Path $dbcInstallPath) -and ($env:Path -notlike "*$dbcInstallPath*")) {
+        $env:Path = "$dbcInstallPath;$env:Path"
+    }
+
     # Verify installation
     $dbcPath = Get-Command dbc -ErrorAction SilentlyContinue
     if (-not $dbcPath) {
@@ -40,13 +46,8 @@ try {
         exit 1
     }
 
-    # Get actual dbc installation directory
+    # Get actual dbc installation directory for GitHub Actions PATH
     $actualDbcDir = Split-Path -Parent $dbcPath.Source
-
-    # Add actual dbc directory to session PATH
-    if ($env:Path -notlike "*$actualDbcDir*") {
-        $env:Path = "$actualDbcDir;$env:Path"
-    }
 
     # Add to GitHub Actions PATH for subsequent steps
     if ($env:GITHUB_PATH) {
