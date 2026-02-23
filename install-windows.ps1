@@ -36,7 +36,7 @@ try {
 
     # Add dbc installation directory to PATH
     $dbcInstallPath = Join-Path $env:USERPROFILE ".local\bin"
-    if (Test-Path $dbcInstallPath) {
+    if ((Test-Path $dbcInstallPath) -and ($env:Path -notlike "*$dbcInstallPath*")) {
         $env:Path = "$dbcInstallPath;$env:Path"
     }
 
@@ -47,9 +47,10 @@ try {
         exit 1
     }
 
-    # Add to GitHub Actions PATH for subsequent steps
+    # Add to GitHub Actions PATH for subsequent steps (use actual location)
     if ($env:GITHUB_PATH) {
-        $dbcInstallPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        $actualDbcDir = Split-Path -Parent $dbcPath.Source
+        $actualDbcDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
 
     # Output version for verification
