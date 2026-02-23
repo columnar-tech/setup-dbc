@@ -67,7 +67,7 @@ steps:
   - uses: actions/checkout@v4
   - uses: columnar-tech/setup-dbc@v1
     with:
-      config-file: 'dbc.toml'
+      driver-list-file: 'dbc.toml'
 ```
 
 ### Custom Config File Path
@@ -77,7 +77,7 @@ steps:
   - uses: actions/checkout@v4
   - uses: columnar-tech/setup-dbc@v1
     with:
-      config-file: 'config/custom-dbc.toml'
+      driver-list-file: 'config/custom-dbc.toml'
 ```
 
 ### Skip Driver Installation
@@ -98,7 +98,7 @@ steps:
 | `version` | Version of dbc CLI to install (e.g., `v0.2.0` or `latest`) | No | `latest` |
 | `api-key` | API key for authenticating private driver installations | No | - |
 | `drivers` | Comma-separated list of drivers to install | No | - |
-| `config-file` | Path to dbc.toml config file for driver installation | No | `dbc.toml` |
+| `driver-list-file` | Path to dbc.toml config file for driver installation | No | `dbc.toml` |
 | `skip-drivers` | Skip driver installation even if drivers specified | No | `false` |
 
 ## Outputs
@@ -110,7 +110,7 @@ steps:
 
 ## Driver Installation Priority
 
-If both `drivers` and `config-file` inputs are provided, the explicit `drivers` list takes precedence.
+If both `drivers` and `driver-list-file` inputs are provided, the explicit `drivers` list takes precedence.
 
 ## Caching
 

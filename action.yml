@@ -16,13 +16,13 @@ inputs:
     description: 'Comma-separated list of drivers to install (e.g., "postgres,mysql")'
     required: false
 
-  config-file:
+  driver-list-file:
     description: 'Path to dbc.toml config file for driver installation'
     required: false
     default: 'dbc.toml'
 
   skip-drivers:
-    description: 'Skip driver installation even if drivers or config-file are specified'
+    description: 'Skip driver installation even if drivers or driver-list-file are specified'
     required: false
     default: 'false'
 
@@ -105,14 +105,14 @@ runs:
       if: inputs.drivers == '' && inputs.skip-drivers != 'true'
       shell: bash
       run: |
-        if [ -f "${{ inputs.config-file }}" ]; then
-          echo "Installing drivers from ${{ inputs.config-file }}"
-          if ! dbc sync -p "${{ inputs.config-file }}"; then
+        if [ -f "${{ inputs.driver-list-file }}" ]; then
+          echo "Installing drivers from ${{ inputs.driver-list-file }}"
+          if ! dbc sync -p "${{ inputs.driver-list-file }}"; then
             echo "::error::Failed to sync drivers from config file"
             exit 2
           fi
         else
-          echo "No config file found at ${{ inputs.config-file }}, skipping driver installation"
+          echo "No config file found at ${{ inputs.driver-list-file }}, skipping driver installation"
         fi
 
 branding:
