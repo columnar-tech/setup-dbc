@@ -1,6 +1,6 @@
 # Setup DBC Action
 
-GitHub Action to install the [dbc CLI](https://dbc.how), authenticate with optional API key, and install drivers.
+GitHub Action to install the [dbc CLI](https://dbc.columnar.tech), authenticate with optional API key, and install drivers.
 
 ## Features
 
@@ -20,7 +20,7 @@ Install the latest version of dbc CLI:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: zeroshade/setup-dbc@v1
+  - uses: columnar-tech/setup-dbc@v1
   - run: dbc version
 ```
 
@@ -30,7 +30,7 @@ Pin to a specific version for reproducibility:
 
 ```yaml
 steps:
-  - uses: zeroshade/setup-dbc@v1
+  - uses: columnar-tech/setup-dbc@v1
     with:
       version: 'v1.2.3'
 ```
@@ -41,7 +41,7 @@ Install drivers using a comma-separated list:
 
 ```yaml
 steps:
-  - uses: zeroshade/setup-dbc@v1
+  - uses: columnar-tech/setup-dbc@v1
     with:
       drivers: 'postgres,mysql,sqlite'
 ```
@@ -52,7 +52,7 @@ Authenticate with API key for private drivers:
 
 ```yaml
 steps:
-  - uses: zeroshade/setup-dbc@v1
+  - uses: columnar-tech/setup-dbc@v1
     with:
       api-key: ${{ secrets.DBC_API_KEY }}
       drivers: 'private-driver,postgres'
@@ -65,7 +65,7 @@ Install drivers from a `dbc.toml` file:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: zeroshade/setup-dbc@v1
+  - uses: columnar-tech/setup-dbc@v1
     with:
       config-file: 'dbc.toml'
 ```
@@ -75,7 +75,7 @@ steps:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: zeroshade/setup-dbc@v1
+  - uses: columnar-tech/setup-dbc@v1
     with:
       config-file: 'config/custom-dbc.toml'
 ```
@@ -86,7 +86,7 @@ Install only the CLI without drivers:
 
 ```yaml
 steps:
-  - uses: zeroshade/setup-dbc@v1
+  - uses: columnar-tech/setup-dbc@v1
     with:
       skip-drivers: 'true'
 ```
@@ -137,7 +137,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: zeroshade/setup-dbc@v1
+      - uses: columnar-tech/setup-dbc@v1
         with:
           version: 'v1.2.3'
           drivers: 'postgres,mysql'
@@ -166,7 +166,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: zeroshade/setup-dbc@v1
+      - uses: columnar-tech/setup-dbc@v1
         with:
           drivers: ${{ matrix.driver }}
 
