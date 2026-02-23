@@ -67,9 +67,11 @@ jobs:
 
       - name: Remove dbc and cached files
         run: |
-          DBC_PATH=$(which dbc)
-          rm -f "$DBC_PATH"
-          # Remove all potential cached paths to properly test cache restoration
+          DBC_PATH=$(command -v dbc)
+          if [ -n "$DBC_PATH" ]; then
+            rm -f "$DBC_PATH"
+          fi
+          # Remove Linux-specific cached paths to test cache restoration
           rm -rf ~/.local/bin/dbc ~/.local/share/dbc ~/.config/dbc
 
       - name: Second run (should restore from cache)
