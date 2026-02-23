@@ -36,13 +36,13 @@ jobs:
       - name: Test action with version
         uses: ./
         with:
-          version: 'v1.0.0'
+          version: 'v0.2.0'
 
       - name: Verify version
         run: |
           VERSION=$(dbc --version)
           echo "Installed version: $VERSION"
-          echo "$VERSION" | grep -q "v1.0.0" || (echo "Expected v1.0.0 but got $VERSION" && exit 1)
+          echo "$VERSION" | grep -q "v0.2.0" || (echo "Expected v0.2.0 but got $VERSION" && exit 1)
 
   test-with-drivers:
     name: Test driver installation
