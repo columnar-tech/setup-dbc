@@ -43,7 +43,7 @@ Install drivers using a comma-separated list:
 steps:
   - uses: columnar-tech/setup-dbc@v1
     with:
-      drivers: 'postgres,mysql,sqlite'
+      drivers: 'postgresql,mysql,sqlite'
 ```
 
 ### With Private Drivers
@@ -55,7 +55,7 @@ steps:
   - uses: columnar-tech/setup-dbc@v1
     with:
       api-key: ${{ secrets.DBC_API_KEY }}
-      drivers: 'private-driver,postgres'
+      drivers: 'oracle,teradata,postgresql'
 ```
 
 ### Using Config File
@@ -140,7 +140,7 @@ jobs:
       - uses: columnar-tech/setup-dbc@v1
         with:
           version: 'v0.2.0'
-          drivers: 'postgres,mysql'
+          drivers: 'postgresql,mysql'
 
       - name: Run tests
         run: npm test
@@ -158,7 +158,7 @@ jobs:
   test:
     strategy:
       matrix:
-        driver: [postgres, mysql, sqlite]
+        driver: [postgresql, mysql, sqlite]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
