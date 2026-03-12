@@ -53,7 +53,7 @@ runs:
         path: |
           ~/.local/bin/dbc
           ~/.local/bin/dbc-install-dir.txt
-          ~\.local\bin\dbc-install-dir.txt
+          ~\.local\bin\dbc-install-dir.txt  # Windows-style path for same file; silently ignored on Unix
           ~/Library/Application Support/dbc
           ${{ runner.temp }}/dbc
         key: ${{ steps.cache-key.outputs.key }}
@@ -111,14 +111,18 @@ runs:
     - name: Authenticate with API key
       if: inputs.api-key != '' && runner.os != 'Windows'
       shell: bash
+      env:
+        INPUT_API_KEY: ${{ inputs.api-key }}
       run: |
-        dbc auth login --api-key "${{ inputs.api-key }}"
+        dbc auth login --api-key "$INPUT_API_KEY"
 
     - name: Authenticate with API key (Windows)
       if: inputs.api-key != '' && runner.os == 'Windows'
       shell: pwsh
+      env:
+        INPUT_API_KEY: ${{ inputs.api-key }}
       run: |
-        dbc auth login --api-key "${{ inputs.api-key }}"
+        dbc auth login --api-key "$env:INPUT_API_KEY"
 
     - name: Install drivers from list
       if: inputs.drivers != '' && inputs.skip-drivers != 'true'

@@ -63,7 +63,10 @@ try {
         $actualDbcDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
 
-    # Save actual install path so cache-hit runs use the verified location
+    # Save actual install path so cache-hit runs use the verified location.
+    # Always written to ~\.local\bin\dbc-install-dir.txt regardless of $actualDbcDir,
+    # consistent with the cache-restore step that reads from that fixed path.
+    # Guarded by $env:GITHUB_PATH to skip during local debugging outside GitHub Actions.
     if ($env:GITHUB_PATH) {
         New-Item -ItemType Directory -Force -Path (Join-Path $env:USERPROFILE ".local\bin") | Out-Null
         $actualDbcDir | Out-File -FilePath (Join-Path $env:USERPROFILE ".local\bin\dbc-install-dir.txt") -Encoding utf8
