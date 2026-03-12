@@ -53,7 +53,6 @@ runs:
         path: |
           ~/.local/bin/dbc
           ~/.local/bin/dbc-install-dir.txt
-          ~\.local\bin\dbc-install-dir.txt  # Windows-style path for same file; silently ignored on Unix
           ~/Library/Application Support/dbc
           ${{ runner.temp }}/dbc
         key: ${{ steps.cache-key.outputs.key }}
