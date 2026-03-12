@@ -8,7 +8,7 @@ echo "Installing dbc CLI version: $VERSION"
 # Download and run the official install script
 if [ "$VERSION" = "latest" ]; then
   curl -fsSL https://dbc.columnar.tech/install.sh | bash
-else  
+else
   curl -fsSL https://dbc.columnar.tech/install.sh | bash -s -- --version "$VERSION"
 fi
 
