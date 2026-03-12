@@ -12,6 +12,8 @@ else
   curl -fsSL https://dbc.columnar.tech/install.sh | bash -s -- --version "$VERSION"
 fi
 
+PATH="$HOME/.local/bin:$PATH"
+
 # Verify installation
 if ! command -v dbc &> /dev/null; then
   echo "::error::dbc CLI installation failed - command not found"
