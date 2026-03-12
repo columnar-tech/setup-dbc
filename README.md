@@ -143,7 +143,7 @@ jobs:
           drivers: 'postgresql,mysql'
 
       - name: Run tests
-        run: npm test
+        run: pytest ...
 ```
 
 ### Matrix Testing
@@ -167,7 +167,7 @@ jobs:
         with:
           drivers: ${{ matrix.driver }}
 
-      - run: npm test
+      - run: pytest ...
 ```
 
 ## License

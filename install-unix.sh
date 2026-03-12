@@ -6,13 +6,10 @@ VERSION="${1:-latest}"
 echo "Installing dbc CLI version: $VERSION"
 
 # Download and run the official install script
-# Note: Version is passed via APP_VERSION environment variable
-# If the official install script doesn't support it, latest version will be installed
 if [ "$VERSION" = "latest" ]; then
   curl -fsSL https://dbc.columnar.tech/install.sh | bash
-else
-  export APP_VERSION="$VERSION"
-  curl -fsSL https://dbc.columnar.tech/install.sh | bash -s
+else  
+  curl -fsSL https://dbc.columnar.tech/install.sh | bash -s -- --version "$VERSION"
 fi
 
 # Verify installation

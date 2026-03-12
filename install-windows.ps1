@@ -21,13 +21,12 @@ try {
     $installScript | Out-File -FilePath $tempScript -Encoding UTF8
 
     try {
-        # Execute script with version via environment variable
-        # Note: Version is passed via APP_VERSION environment variable
-        # If the official install script doesn't support it, latest version will be installed
+        # Execute script, passing -Version parameter if not "latest"
         if ($Version -ne "latest") {
-            $env:APP_VERSION = $Version
+            & $tempScript -Version $Version
+        } else {
+            & $tempScript
         }
-        & $tempScript
     } finally {
         # Clean up temporary file
         Remove-Item -Path $tempScript -ErrorAction SilentlyContinue
