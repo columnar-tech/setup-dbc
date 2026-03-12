@@ -103,7 +103,7 @@ runs:
       run: |
         try {
             $v = & dbc --version 2>&1 | Select-String 'v\d+\.\d+\.\d+' | ForEach-Object { $_.Matches[0].Value } | Select-Object -First 1
-        } catch {}
+        } catch { Write-Warning "dbc --version failed: $_" }
         if (-not $v) { $v = 'unknown' }
         "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
