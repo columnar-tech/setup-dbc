@@ -29,7 +29,7 @@ inputs:
 outputs:
   version:
     description: 'The installed version of dbc CLI'
-    value: ${{ steps.install.outputs.version }}
+    value: ${{ steps.install.outputs.version || steps.install-win.outputs.version }}
 
   cache-hit:
     description: 'Whether the dbc CLI was restored from cache'
@@ -52,6 +52,7 @@ runs:
         # Missing paths are silently ignored by the cache action
         path: |
           ~/.local/bin/dbc
+          ~/.local/bin/dbc-install-dir.txt
           ~/Library/Application Support/dbc
           ${{ runner.temp }}/dbc
         key: ${{ steps.cache-key.outputs.key }}
@@ -78,14 +79,33 @@ runs:
     - name: Add dbc to PATH (Windows, cache hit)
       if: runner.os == 'Windows' && steps.cache.outputs.cache-hit == 'true'
       shell: pwsh
-      run: echo (Join-Path $env:USERPROFILE ".local\bin") >> $env:GITHUB_PATH
+      run: |
+        $sideFile = Join-Path $env:USERPROFILE ".local\bin\dbc-install-dir.txt"
+        if (Test-Path $sideFile) {
+            $installDir = (Get-Content $sideFile -Raw).Trim()
+        } else {
+            $installDir = Join-Path $env:USERPROFILE ".local\bin"
+        }
+        $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Get installed version
       id: install
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         VERSION=$(dbc --version | grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' | head -n1 || echo "unknown")
         echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Get installed version (Windows)
+      id: install-win
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        try {
+            $v = & dbc --version 2>&1 | Select-String 'v\d+\.\d+\.\d+' | ForEach-Object { $_.Matches[0].Value } | Select-Object -First 1
+        } catch {}
+        if (-not $v) { $v = 'unknown' }
+        "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
     - name: Authenticate with API key
       if: inputs.api-key != ''

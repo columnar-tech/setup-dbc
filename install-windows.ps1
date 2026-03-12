@@ -63,6 +63,9 @@ try {
         $actualDbcDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
 
+    # Save actual install path so cache-hit runs use the verified location
+    $actualDbcDir | Out-File -FilePath (Join-Path $env:USERPROFILE ".local\bin\dbc-install-dir.txt") -Encoding utf8
+
     # Output version for verification
     dbc --version
 
