@@ -63,7 +63,11 @@ try {
         $actualDbcDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
 
+    # Output version for verification
+    dbc --version
+
     # Save actual install path so cache-hit runs use the verified location.
+    # Written after dbc --version succeeds to guarantee it records a working install.
     # Always written to ~\.local\bin\dbc-install-dir.txt regardless of $actualDbcDir,
     # consistent with the cache-restore step that reads from that fixed path.
     # Guarded by $env:GITHUB_PATH to skip during local debugging outside GitHub Actions.
@@ -71,9 +75,6 @@ try {
         New-Item -ItemType Directory -Force -Path (Join-Path $env:USERPROFILE ".local\bin") | Out-Null
         $actualDbcDir | Out-File -FilePath (Join-Path $env:USERPROFILE ".local\bin\dbc-install-dir.txt") -Encoding utf8
     }
-
-    # Output version for verification
-    dbc --version
 
     Write-Host "dbc CLI installed successfully"
 }

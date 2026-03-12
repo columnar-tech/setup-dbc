@@ -52,6 +52,7 @@ runs:
         # Missing paths are silently ignored by the cache action
         path: |
           ~/.local/bin/dbc
+          ~/.local/bin/dbc.exe
           ~/.local/bin/dbc-install-dir.txt
           ~/Library/Application Support/dbc
           ${{ runner.temp }}/dbc
@@ -86,7 +87,11 @@ runs:
         } else {
             $installDir = Join-Path $env:USERPROFILE ".local\bin"
         }
-        $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        if ($installDir) {
+            $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        } else {
+            Write-Error "dbc-install-dir.txt is empty; cannot add dbc to PATH"
+        }
 
     - name: Get installed version
       id: install
