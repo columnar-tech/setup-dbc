@@ -53,6 +53,7 @@ runs:
         path: |
           ~/.local/bin/dbc
           ~/.local/bin/dbc-install-dir.txt
+          ~\.local\bin\dbc-install-dir.txt
           ~/Library/Application Support/dbc
           ${{ runner.temp }}/dbc
         key: ${{ steps.cache-key.outputs.key }}
@@ -72,7 +73,7 @@ runs:
         & "${{ github.action_path }}/install-windows.ps1" -Version "${{ inputs.version }}"
 
     - name: Add dbc to PATH (Unix)
-      if: runner.os != 'Windows'
+      if: runner.os != 'Windows' && (steps.cache.outputs.cache-hit == 'true' || steps.install-unix.outcome == 'success')
       shell: bash
       run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
@@ -108,8 +109,14 @@ runs:
         "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
     - name: Authenticate with API key
-      if: inputs.api-key != ''
+      if: inputs.api-key != '' && runner.os != 'Windows'
       shell: bash
+      run: |
+        dbc auth login --api-key "${{ inputs.api-key }}"
+
+    - name: Authenticate with API key (Windows)
+      if: inputs.api-key != '' && runner.os == 'Windows'
+      shell: pwsh
       run: |
         dbc auth login --api-key "${{ inputs.api-key }}"
 

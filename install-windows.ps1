@@ -64,8 +64,10 @@ try {
     }
 
     # Save actual install path so cache-hit runs use the verified location
-    New-Item -ItemType Directory -Force -Path (Join-Path $env:USERPROFILE ".local\bin") | Out-Null
-    $actualDbcDir | Out-File -FilePath (Join-Path $env:USERPROFILE ".local\bin\dbc-install-dir.txt") -Encoding utf8
+    if ($env:GITHUB_PATH) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $env:USERPROFILE ".local\bin") | Out-Null
+        $actualDbcDir | Out-File -FilePath (Join-Path $env:USERPROFILE ".local\bin\dbc-install-dir.txt") -Encoding utf8
+    }
 
     # Output version for verification
     dbc --version
