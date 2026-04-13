@@ -19,7 +19,7 @@ Install the latest version of dbc CLI:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
   - uses: columnar-tech/setup-dbc@v1
   - run: dbc --version
 ```
@@ -64,7 +64,7 @@ Install drivers from a `dbc.toml` file:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
   - uses: columnar-tech/setup-dbc@v1
     with:
       driver-list-file: 'dbc.toml'
@@ -74,7 +74,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
   - uses: columnar-tech/setup-dbc@v1
     with:
       driver-list-file: 'config/custom-dbc.toml'
@@ -135,7 +135,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: columnar-tech/setup-dbc@v1
         with:
@@ -161,7 +161,7 @@ jobs:
         driver: [postgresql, mysql, sqlite]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: columnar-tech/setup-dbc@v1
         with:
