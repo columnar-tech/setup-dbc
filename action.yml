@@ -1,6 +1,6 @@
 name: 'Setup DBC'
 description: 'Install dbc CLI, authenticate, and install drivers'
-author: 'zeroshade'
+author: 'Columnar'
 
 inputs:
   version:
