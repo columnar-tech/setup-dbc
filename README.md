@@ -1,6 +1,6 @@
 # Setup dbc Action
 
-GitHub Action to install [dbc](https://columnar.tech/dbc), authenticate with optional API key, and install drivers.
+GitHub Action to set up [dbc](https://columnar.tech/dbc) and install drivers in CI.
 
 ## Features
 
