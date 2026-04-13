@@ -58,9 +58,17 @@ steps:
       drivers: 'oracle,teradata,postgresql'
 ```
 
-### Using Config File
+### Installing Drivers From A Driver List
 
-Install drivers from a `dbc.toml` file:
+If `dbc.toml` is present at the workspace root, the action will run `dbc sync` automatically:
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+  - uses: columnar-tech/setup-dbc@v1
+```
+
+The above is equivalent to:
 
 ```yaml
 steps:
@@ -70,7 +78,9 @@ steps:
       driver-list-file: 'dbc.toml'
 ```
 
-### Custom Config File Path
+See [Using a Driver List](https://docs.columnar.tech/dbc/guides/driver_list/) to learn more about driver list files.
+
+### Custom Driver List Path
 
 ```yaml
 steps:
