@@ -1,6 +1,6 @@
 # Setup dbc Action
 
-GitHub Action to install the [dbc CLI](https://dbc.columnar.tech), authenticate with optional API key, and install drivers.
+GitHub Action to set up [dbc](https://columnar.tech/dbc) and install drivers in CI.
 
 ## Features
 
@@ -19,7 +19,7 @@ Install the latest version of dbc CLI:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
   - uses: columnar-tech/setup-dbc@v1
   - run: dbc --version
 ```
@@ -48,7 +48,7 @@ steps:
 
 ### With Private Drivers
 
-Authenticate with API key for private drivers:
+Authenticate with API key for [private drivers](https://docs.columnar.tech/dbc/guides/private_drivers/):
 
 ```yaml
 steps:
@@ -58,23 +58,33 @@ steps:
       drivers: 'oracle,teradata,postgresql'
 ```
 
-### Using Config File
+### Installing Drivers From A Driver List
 
-Install drivers from a `dbc.toml` file:
+If `dbc.toml` is present at the workspace root, the action will run `dbc sync` automatically:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
+  - uses: columnar-tech/setup-dbc@v1
+```
+
+The above is equivalent to:
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
   - uses: columnar-tech/setup-dbc@v1
     with:
       driver-list-file: 'dbc.toml'
 ```
 
-### Custom Config File Path
+See [Using a Driver List](https://docs.columnar.tech/dbc/guides/driver_list/) to learn more about driver list files.
+
+### Custom Driver List Path
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
   - uses: columnar-tech/setup-dbc@v1
     with:
       driver-list-file: 'config/custom-dbc.toml'
@@ -135,7 +145,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: columnar-tech/setup-dbc@v1
         with:
@@ -161,7 +171,7 @@ jobs:
         driver: [postgresql, mysql, sqlite]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: columnar-tech/setup-dbc@v1
         with:
