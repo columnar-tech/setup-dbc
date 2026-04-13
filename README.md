@@ -48,7 +48,7 @@ steps:
 
 ### With Private Drivers
 
-Authenticate with API key for private drivers:
+Authenticate with API key for [private drivers](https://docs.columnar.tech/dbc/guides/private_drivers/):
 
 ```yaml
 steps:
