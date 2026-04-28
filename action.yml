@@ -1,4 +1,4 @@
-name: 'Setup DBC'
+name: 'Setup dbc'
 description: 'Install dbc CLI, authenticate, and install drivers'
 author: 'Columnar'
 
