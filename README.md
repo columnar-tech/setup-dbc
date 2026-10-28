@@ -124,7 +124,7 @@ If both `drivers` and `driver-list-file` inputs are provided, the explicit `driv
 
 ## Caching
 
-This action automatically caches the dbc CLI binary based on the version and OS. Subsequent runs with the same version will be significantly faster.
+This action automatically caches the dbc CLI binary based on the version, OS, and architecture. When `version` is `latest`, it is resolved to the current release first, so new releases are picked up automatically. Subsequent runs with the same version will be significantly faster.
 
 ## Error Handling
 
